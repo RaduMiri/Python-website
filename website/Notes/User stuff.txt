@@ -1,0 +1,42 @@
+To remember the user we do some steps as well
+
+
+Method 1 - flask
+1) We use the flask user module with 
+   from flask_login import login_user, login_required, logout_user, current_user
+2) We login the user in the login function in auth using
+   login_user(user, remember=True) #The user will be remember anytime they access the website, unless the server is goes down or the user clears cache or stuff
+   We put this after we verify the data, just before the return redirect
+3) We do a similar thing with the exact line after we sign-up a user, before redirecting
+4) We make the logout
+   @auth.route('/logout')
+   @login_required #This decorator makes it so a user must be logged in to be able to get logged out, because otherwise it doesn't make sense
+   def logout():
+      logout_user()
+      return redirect(url_for('auth.login'))
+   Bonus: he also put a @login_reuquired for the home route in views, this is how this site is strucutred, like facebook
+5) In __init__.py 
+   from flask_login import LoginManager
+6) Now we use the login manager here in create_app
+   After we make the database and import the models
+   login_manager = LoginManager()
+   login_manager.login_view = 'auth.login'
+   login_manager.init_app(app)
+
+   #This tells flask how to load a user
+   @login_manager.user_loader
+   def load_user(id):
+      return User.query.get(int(id)) #Works like fitler by, by default looking for the primary key equals to the argument sent
+   Bonus: we should make the nav here only show accessible tabs, depending on whether or not a user is logged in
+   In views.py we add to the reuturn function the current user return render_template("home.html", user=current_user) //Also maybe we could do this in a simpler way?
+   And then is base.html or where the nav is we put conditional block
+   {% if user.is_authenticated %}
+      <a class="nav-item nav-link" id="home" href="/">Home</a>
+      <a class="nav-item nav-link" id="logout" href="/logout">Logout</a>
+   {% else %}
+      <a class="nav-item nav-link" id="login" href="/login">Login</a>
+      <a class="nav-item nav-link" id="signUp" href="/sign-up">Sign-up</a>
+   {% endif %}
+Done
+
+Method 2 - manually, idk
