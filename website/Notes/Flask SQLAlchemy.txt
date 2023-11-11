@@ -1,0 +1,18 @@
+Setup:
+In init.py
+1) from flask_sqlalchemy import flask_sqlalchemy
+2) db = SQLAlchemy()
+   DB_NAME = ""
+In create_app()
+3) app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}' #f'' is just a formated string
+4) db.init_app(app) #This just tells the database object to initialize the database with the app
+5) from . import models #we put it just so we have the classes created so we can reference them here
+   create_database(app)
+6) we make the function create database outside the create_app() function still in init.py
+   def create_database(app):
+    if not path.exists('website/'+DB_NAME): #the name of the folder 
+        db.create_all(app=app) #we need to tell SQLAlchemy which app to use, we have only one and it is called app
+        print("Created Database!")
+
+Then in models we start making the models. To make a model we need to use the db object.
+We make a model by making a class that inherits db.Model

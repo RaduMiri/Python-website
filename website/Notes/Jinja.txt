@@ -1,0 +1,18 @@
+Jinja is a python framework that allows the usage of javascript functionality without using javascript, but pyhton instead
+It is a templating language
+
+!!Careful a block is actually space sensitive, like, the syntax has 2 spaces {%  %} and you write between these
+
+if I put in the python viewer file a value that I pass with the return of the viewer to the template I am rendering, I can use the value in the template
+Also, I can write if/else/elif blocks like this
+auth.py:
+@auth.route('/login')
+def login():
+    return render_template('login.html', boolean=True)
+
+login.html
+{% if boolean == True %}
+Yes, it is True
+{% else }
+No, it is False
+{% endif %} 
