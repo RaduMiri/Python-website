@@ -62,7 +62,7 @@ def sign_up():
             new_user = User(email=email, first_name=first_name, password=generate_password_hash(password1, method='pbkdf2:sha256')) #The method here is just a hashing algorithm, also sha256 didn't work, this seems to be the default method, maybe it works without specifying one
             db.session.add(new_user)
             db.session.commit()
-            login_user(user, remember=True)
+            login_user(new_user, remember=True)
             flash("Account created", category="success")
             return redirect(url_for('views.home')) #I could redirect to /home, but if i change the url for home this will break, it is safer to use the home function from views
     return render_template('sign_up.html', user=current_user)

@@ -1,0 +1,57 @@
+1) We make the form and visualisation in home.html
+{% block content %}
+<h1 align="center">Notes</h1>
+<ul class="list-group list-group-flush" id="notes">
+    {% for note in user.notes %}
+    <li class="list-group-item">{{ note.data }}</li>
+    {% endfor %}
+</ul>
+<form method="POST">
+    <textarea name="note" id="note" class="form-control"></textarea>
+    <br/>
+    <div align="center">
+        <button type="submit" class="btn btn-primary">Add note</button>
+    </div>
+</form>
+{% endblock %}
+2) We make the backend functionality in view.py for the home function
+    if request.method == 'POST':
+    note = request.form.get('note')
+    if len(note)<1:
+        flash('NOte is too short', category='error')
+    else:
+        new_note = Note(data=note, user_id=current_user.id)
+        db.session.add(new_note)
+        db.session.commit()
+        flash('Note added!', category='success') 
+2.1) Don't forget to add the functionality to home to use POST and GET requests
+    @views.route('/', methods=['GET', 'POST'])
+    As well as the necessary imports
+3) To delete a note we add a delete button with an onclick function that uses a js function we write called deleteNote
+3.1) In the li with the note we add this button
+    <button type="button" class="close" onclick="deleteNote({{ note.id }})"> 
+        <span aria-hidden="true">&times;</span>
+    </button> 
+3.2) The function in index.js
+    //It was done like this to not use Ajax
+    function deleteNote(noteId) {
+        // Send a POST request with the noteID to delete-note endpoint
+        fetch('/delete-note',{ //The argument is the endpoint
+            method: 'POST', //This is the request type
+            body: JSON.stringify({ noteID: noteId}), //This is what it sends, a JSON with noteId
+        }).then((_res) => { //And after it gets a response from the endpoint it reloads the window
+            window.location.href = "/"; //This is how to reload a window with a GET request, it just says rediredct to home page which will reload the home page
+        });
+    }
+3.3) In views.py we now make the endpoint function, import json, and from flask import jsonify
+    @views.route('/delete-note', methods=['POST']) #Why not just use a delete request, that return is strange
+    def delete_note():
+        data = json.loads(request.data) #Takes data from a post request as a json object or python dictionary
+        noteId = data['noteId']
+        note = Note.query.get(noteId) #We search the db for the note with that id as primary key, because .query.get searches by default primary keys
+        if note: #If there is a matching note
+            if note.user_id == current_user.id: #If the signed in user owns this note
+                db.session.delete(note) 
+                db.session.commit()       
+        return jsonify({}) #In the end return an empty response, because we need to
+    

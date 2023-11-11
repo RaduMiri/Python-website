@@ -1,0 +1,2 @@
+Make it so the page doesn't relaod on erronious information
+Add settings and delete user

@@ -1,0 +1,7 @@
+I need to do 3 things:
+1) Make a function to add a note, remember it for the user
+    1.1) Create the Note class, which I already have in models
+    1.2) Function to create a note using the form from home, let's go
+2) Make a function to read a note
+3) Display the notes for the users
+
